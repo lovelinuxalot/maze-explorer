@@ -15,12 +15,17 @@ GitHub Token value as secret text with ID 'GITHUB_TOKEN'
 
 node {
 
-     server = Artifactory.server "artifactory"
+     def server = Artifactory.server "artifactory"
      buildInfo = Artifactory.newBuildInfo()
      buildInfo.env.capture = true
+     
+     def rtMaven = Artifactory.newMavenBuild()
+     rtMaven.tool = "maven3"
+     rtMaven.deployer releaseRepo:'libs-release-local', snapshotRepo:'libs-snapshot-local', server: server
+     rtMaven.resolver releaseRepo:'libs-release', snapshotRepo:'libs-snapshot', server: server
     
     // we need to set a newer JVM for Sonar
-    env.JAVA_HOME="${tool 'Java SE DK 8u131'}"
+    env.JAVA_HOME= tool name: 'jdk8', type: 'jdk'
     env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
     
     // pull request or feature branch
