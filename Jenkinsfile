@@ -56,9 +56,9 @@ node {
             		}    
 		}
     	}
-	def pushartifact(){
-        	stage('Publish build info') {
-        		server.publishBuildInfo buildInfo
-        	}
-	}
+}
+def pushartifact(){
+     	stage('Publish build info') {
+		server.publishBuildInfo buildInfo
+        }
 }
