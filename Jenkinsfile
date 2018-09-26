@@ -18,12 +18,13 @@ node {
   	}
 	
         stage('Build and test') {
-        	buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package cobertura:cobertura -Dcobertura.report.format=xml'
+        	//buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package cobertura:cobertura -Dcobertura.report.format=xml'
+        	buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean test'
 	}
 	
 	stage('Unit Test') {
         	junit '**/target/*-reports/TEST-*.xml'
-                step([$class: 'CoberturaPublisher', coberturaReportFile: 'target/site/cobertura/coverage.xml'])
+                //step([$class: 'CoberturaPublisher', coberturaReportFile: 'target/site/cobertura/coverage.xml'])
 	}
 	
 	
