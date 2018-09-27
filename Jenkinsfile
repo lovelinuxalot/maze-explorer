@@ -54,6 +54,7 @@ node {
 }
 
 def buildAndPushToArtifactory() {
+	def server = Artifactory.server "artifactory"
 	// Create an Artifactory Maven instance.
 	def rtMaven = Artifactory.newMavenBuild()
 	// Tool name from Jenkins configuration
