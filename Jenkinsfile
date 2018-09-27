@@ -56,13 +56,8 @@ node {
             		if (qg.status != 'OK') {
                 		echo "Pipeline aborted due to quality gate failure: ${qg.status}"
             		} else {
-                		pushartifact()
+                		server.publishBuildInfo buildInfo
             		}    
 		}
     	}
-}
-def pushartifact(){
-     	stage('Publish build info') {
-		server.publishBuildInfo buildInfo
-        }
 }
