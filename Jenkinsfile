@@ -4,13 +4,15 @@ node {
     		git 'https://github.com/lovelinuxalot/maze-explorer.git'
   	}
 	
-        stage('Compile') {
+        stage('Build') {
         	//buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package cobertura:cobertura -Dcobertura.report.format=xml'
 		def mvnHome = tool name: 'maven3', type: 'maven'
-		sh "${mvnHome}/bin/mvn clean validate compile test"
+		sh "${mvnHome}/bin/mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true -B -V"
 	}
 	
-	stage('Unit Test') {
+	unitTest()
+	
+	stage('All Test') {
         	junit '**/target/*-reports/TEST-*.xml'
 		step([$class: 'JacocoPublisher', execPattern: '**/target/jacoco.exec'])
 		
@@ -63,4 +65,12 @@ def buildAndPushToArtifactory() {
 	rtMaven.resolver releaseRepo:'libs-release', snapshotRepo:'libs-snapshot', server: server
 	rtMaven.run pom: 'pom.xml', goals: 'install', buildInfo: buildInfo
 	server.publishBuildInfo buildInfo
+}
+
+def unitTest() {
+    stage 'Unit tests'
+    mvn 'test -B -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true'
+    if (currentBuild.result == "UNSTABLE") {
+        sh "exit 1"
+    }
 }
