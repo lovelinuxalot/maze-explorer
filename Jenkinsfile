@@ -11,7 +11,7 @@ node {
         stage('Compile') {
         	//buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package cobertura:cobertura -Dcobertura.report.format=xml'
 		def mvnHome = tool name: 'maven3', type: 'maven'
-		sh "${mvnHome}/bin/mvn clean validate compile install test"
+		sh "${mvnHome}/bin/mvn clean validate compile"
 	}
 	
 	stage('Unit Test') {
