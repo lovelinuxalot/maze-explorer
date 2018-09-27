@@ -8,7 +8,7 @@ node {
         	//buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package cobertura:cobertura -Dcobertura.report.format=xml'
 		//def mvnHome = tool name: 'maven3', type: 'maven'
 		//sh "${mvnHome}/bin/mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true -B -V"
-		mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true -B -V"
+		mvn 'clean install -DskipTests=true -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true -B -V'
 	}
 	
 	unitTest()
@@ -80,7 +80,7 @@ def buildAndPushToArtifactory() {
 def unitTest() {
 	stage('Unit tests') {
 			def mvnHome = tool name: 'maven3', type: 'maven'
-			mvn test -B -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true"
+			mvn 'test -B -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true'
 			if (currentBuild.result == "UNSTABLE") {
 				sh "exit 1"
 			}
