@@ -1,9 +1,5 @@
 node {
-	// Get Artifactory server instance, defined in the Artifactory Plugin administration page.
-	def server = Artifactory.server "artifactory"
-	def buildInfo = Artifactory.newBuildInfo()
-	buildInfo.env.capture = true
-    	        
+	    	        
 	stage('SCM') {
     		git 'https://github.com/lovelinuxalot/maze-explorer.git'
   	}
@@ -54,7 +50,10 @@ node {
 }
 
 def buildAndPushToArtifactory() {
+	// Get Artifactory server instance, defined in the Artifactory Plugin administration page.
 	def server = Artifactory.server "artifactory"
+	def buildInfo = Artifactory.newBuildInfo()
+	buildInfo.env.capture = true
 	// Create an Artifactory Maven instance.
 	def rtMaven = Artifactory.newMavenBuild()
 	// Tool name from Jenkins configuration
