@@ -6,8 +6,9 @@ node {
 	
         stage('Build') {
         	//buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package cobertura:cobertura -Dcobertura.report.format=xml'
-		def mvnHome = tool name: 'maven3', type: 'maven'
-		sh "${mvnHome}/bin/mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true -B -V"
+		//def mvnHome = tool name: 'maven3', type: 'maven'
+		//sh "${mvnHome}/bin/mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true -B -V"
+		mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true -B -V"
 	}
 	
 	unitTest()
@@ -51,6 +52,15 @@ node {
     	}
 }
 
+def mvn(args) {
+    withMaven(
+        maven: 'maven3',
+        ) {
+        // Run the maven build
+        sh "mvn $args -Dmaven.test.failure.ignore"
+    }
+}
+
 def buildAndPushToArtifactory() {
 	// Get Artifactory server instance, defined in the Artifactory Plugin administration page.
 	def server = Artifactory.server "artifactory"
@@ -70,7 +80,7 @@ def buildAndPushToArtifactory() {
 def unitTest() {
 	stage('Unit tests') {
 			def mvnHome = tool name: 'maven3', type: 'maven'
-			sh "${mvnHome}/bin/mvn test -B -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true"
+			mvn test -B -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true"
 			if (currentBuild.result == "UNSTABLE") {
 				sh "exit 1"
 			}
