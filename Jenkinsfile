@@ -68,10 +68,11 @@ def buildAndPushToArtifactory() {
 }
 
 def unitTest() {
-	stage 'Unit tests'
-	def mvnHome = tool name: 'maven3', type: 'maven'
-	sh "${mvnHome}/bin/mvn test -B -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true"
-	if (currentBuild.result == "UNSTABLE") {
-	sh "exit 1"
-    }
+	stage('Unit tests') {
+			def mvnHome = tool name: 'maven3', type: 'maven'
+			sh "${mvnHome}/bin/mvn test -B -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true"
+			if (currentBuild.result == "UNSTABLE") {
+				sh "exit 1"
+			}
+	}
 }
