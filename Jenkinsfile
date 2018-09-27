@@ -19,7 +19,6 @@ node {
 	
         stage('Compile') {
         	//buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package cobertura:cobertura -Dcobertura.report.format=xml'
-        	//buildInfo = rtMaven.run pom: 'pom.xml', goals: ' -U '
 		def mvnHome = tool name: 'maven3', type: 'maven'
 		sh "${mvnHome}/bin/mvn clean validate compile test"
 	}
@@ -57,11 +56,14 @@ node {
             		if (qg.status != 'OK') {
                 		echo "Pipeline aborted due to quality gate failure: ${qg.status}"
             		} else {
+				buildartifact()
                 		pushartifact()
             		}    
 		}
     	}
 }
+
+
 def buildartifact() {
 	stage('Build Artifact') {
 		buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package'
