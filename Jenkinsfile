@@ -1,18 +1,9 @@
 node {
-    	// Get Artifactory server instance, defined in the Artifactory Plugin administration page.
+	// Get Artifactory server instance, defined in the Artifactory Plugin administration page.
 	def server = Artifactory.server "artifactory"
-	// Create an Artifactory Maven instance.
-	def rtMaven = Artifactory.newMavenBuild()
-	def buildInfo    
-
-        stage('Artifactory configuration') {
-		    // Tool name from Jenkins configuration
-		    rtMaven.tool = "maven3"
-		    // Set Artifactory repositories for dependencies resolution and artifacts deployment.
-		    rtMaven.deployer releaseRepo:'libs-release-local', snapshotRepo:'libs-snapshot-local', server: server
-		    rtMaven.resolver releaseRepo:'libs-release', snapshotRepo:'libs-snapshot', server: server
-	    }
-        
+	def buildInfo = Artifactory.newBuildInfo()
+	buildInfo.env.capture = true
+    	        
 	stage('SCM') {
     		git 'https://github.com/lovelinuxalot/maze-explorer.git'
   	}
@@ -56,22 +47,20 @@ node {
             		if (qg.status != 'OK') {
                 		echo "Pipeline aborted due to quality gate failure: ${qg.status}"
             		} else {
-				buildartifact()
-                		pushartifact()
+				buildAndPushToArtifactory()
             		}    
 		}
     	}
 }
 
-
-def buildartifact() {
-	stage('Build Artifact') {
-		rtMaven.tool = "maven3"
-		buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package'
-	}
-}
-def pushartifact(){
-     	stage('Publish build info') {
-		server.publishBuildInfo buildInfo
-        }
+def buildAndPushToArtifactory() {
+	// Create an Artifactory Maven instance.
+	def rtMaven = Artifactory.newMavenBuild()
+	// Tool name from Jenkins configuration
+	rtMaven.tool = "maven3"
+	// Set Artifactory repositories for dependencies resolution and artifacts deployment.
+	rtMaven.deployer releaseRepo:'libs-release-local', snapshotRepo:'libs-snapshot-local', server: server
+	rtMaven.resolver releaseRepo:'libs-release', snapshotRepo:'libs-snapshot', server: server
+	rtMaven.run pom: 'pom.xml', goals: 'install', buildInfo: buildInfo
+	server.publishBuildInfo buildInfo
 }
