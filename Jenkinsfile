@@ -19,7 +19,7 @@ node {
 	
         stage('Build and test') {
         	//buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package cobertura:cobertura -Dcobertura.report.format=xml'
-        	buildInfo = rtMaven.run pom: 'pom.xml', goals: '-Dmaven.test.failure.ignore clean package'
+        	buildInfo = rtMaven.run pom: 'pom.xml', goals: '-Dmaven.test.failure.ignore -U clean package'
 	}
 	
 	stage('Unit Test') {
