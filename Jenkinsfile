@@ -19,14 +19,14 @@ node {
 	
         stage('Build and test') {
         	//buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package cobertura:cobertura -Dcobertura.report.format=xml'
-        	buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean test'
+        	buildInfo = rtMaven.run pom: 'pom.xml', goals: '-Dmaven.test.failure.ignore clean package'
 	}
 	
 	stage('Unit Test') {
         	junit '**/target/*-reports/TEST-*.xml'
-		step([$class: 'JacocoPublisher', execPattern:'**/**.exec', classPattern: '**/classes', sourcePattern: '**/src/main/java'])
-
-
+		archive 'target/*.jar'
+		step([$class: 'JacocoPublisher', execPattern: '**/target/jacoco.exec']
+		
                 //step([$class: 'CoberturaPublisher', coberturaReportFile: 'target/site/cobertura/coverage.xml'])
 	}
 	
