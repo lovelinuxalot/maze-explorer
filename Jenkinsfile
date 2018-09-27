@@ -17,9 +17,11 @@ node {
     		git 'https://github.com/lovelinuxalot/maze-explorer.git'
   	}
 	
-        stage('Build and test') {
+        stage('Compile') {
         	//buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package cobertura:cobertura -Dcobertura.report.format=xml'
-        	buildInfo = rtMaven.run pom: 'pom.xml', goals: '-Dmaven.test.failure.ignore -U clean validate compile test'
+        	//buildInfo = rtMaven.run pom: 'pom.xml', goals: ' -U '
+		def mvnHome = tool name: 'maven3', type: 'maven'
+		sh "${mvnHome}/bin/mvn clean validate compile test"
 	}
 	
 	stage('Unit Test') {
@@ -59,6 +61,11 @@ node {
             		}    
 		}
     	}
+}
+def buildartifact() {
+	stage('Build Artifact') {
+		buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package'
+	}
 }
 def pushartifact(){
      	stage('Publish build info') {
