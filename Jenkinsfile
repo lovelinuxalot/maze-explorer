@@ -15,7 +15,8 @@ node {
 	
 	stage('All Test') {
         	junit '**/target/*-reports/TEST-*.xml'
-		step([$class: 'JacocoPublisher', execPattern: '**/target/jacoco.exec'])
+		//mvn "org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=true -Pcoverage-per-test"
+		//step([$class: 'JacocoPublisher', execPattern: '**/target/jacoco.exec'])
 		
                 //step([$class: 'CoberturaPublisher', coberturaReportFile: 'target/site/cobertura/coverage.xml'])
 	}
@@ -30,6 +31,7 @@ node {
   	//}
 	
 	stage('SonarQube analysis'){
+		mvn "org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=true -Pcoverage-per-test"
 		def scannerHome = tool 'scanner'
                 withSonarQubeEnv('sonar') {
                     sh "${scannerHome}/bin/sonar-scanner"
