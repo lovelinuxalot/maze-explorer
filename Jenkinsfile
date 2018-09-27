@@ -1,9 +1,18 @@
 node {
-	// Get Artifactory server instance, defined in the Artifactory Plugin administration page.
+    	// Get Artifactory server instance, defined in the Artifactory Plugin administration page.
 	def server = Artifactory.server "artifactory"
-	def buildInfo = Artifactory.newBuildInfo()
-	buildInfo.env.capture = true
-    	        
+	// Create an Artifactory Maven instance.
+	def rtMaven = Artifactory.newMavenBuild()
+	def buildInfo    
+
+        stage('Artifactory configuration') {
+		    // Tool name from Jenkins configuration
+		    rtMaven.tool = "maven3"
+		    // Set Artifactory repositories for dependencies resolution and artifacts deployment.
+		    rtMaven.deployer releaseRepo:'libs-release-local', snapshotRepo:'libs-snapshot-local', server: server
+		    rtMaven.resolver releaseRepo:'libs-release', snapshotRepo:'libs-snapshot', server: server
+	    }
+        
 	stage('SCM') {
     		git 'https://github.com/lovelinuxalot/maze-explorer.git'
   	}
@@ -11,7 +20,7 @@ node {
         stage('Compile') {
         	//buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package cobertura:cobertura -Dcobertura.report.format=xml'
 		def mvnHome = tool name: 'maven3', type: 'maven'
-		sh "${mvnHome}/bin/mvn clean validate compile"
+		sh "${mvnHome}/bin/mvn clean validate compile test"
 	}
 	
 	stage('Unit Test') {
@@ -47,20 +56,22 @@ node {
             		if (qg.status != 'OK') {
                 		echo "Pipeline aborted due to quality gate failure: ${qg.status}"
             		} else {
-				buildAndPushToArtifactory()
+				buildartifact()
+                		pushartifact()
             		}    
 		}
     	}
 }
 
-def buildAndPushToArtifactory() {
-	// Create an Artifactory Maven instance.
-	def rtMaven = Artifactory.newMavenBuild()
-	// Tool name from Jenkins configuration
-	rtMaven.tool = "maven3"
-	// Set Artifactory repositories for dependencies resolution and artifacts deployment.
-	rtMaven.deployer releaseRepo:'libs-release-local', snapshotRepo:'libs-snapshot-local', server: server
-	rtMaven.resolver releaseRepo:'libs-release', snapshotRepo:'libs-snapshot', server: server
-	rtMaven.run pom: 'pom.xml', goals: 'install', buildInfo: buildInfo
-	server.publishBuildInfo buildInfo
+
+def buildartifact() {
+	stage('Build Artifact') {
+		rtMaven.tool = "maven3"
+		buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package'
+	}
+}
+def pushartifact(){
+     	stage('Publish build info') {
+		server.publishBuildInfo buildInfo
+        }
 }
