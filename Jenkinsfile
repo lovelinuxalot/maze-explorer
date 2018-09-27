@@ -56,6 +56,7 @@ node {
             		if (qg.status != 'OK') {
                 		echo "Pipeline aborted due to quality gate failure: ${qg.status}"
             		} else {
+				buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package'
                 		server.publishBuildInfo buildInfo
             		}    
 		}
