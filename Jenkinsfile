@@ -24,7 +24,6 @@ node {
 	
 	stage('Unit Test') {
         	junit '**/target/*-reports/TEST-*.xml'
-		archive 'target/*.jar'
 		step([$class: 'JacocoPublisher', execPattern: '**/target/jacoco.exec'])
 		
                 //step([$class: 'CoberturaPublisher', coberturaReportFile: 'target/site/cobertura/coverage.xml'])
