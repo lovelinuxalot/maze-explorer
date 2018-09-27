@@ -66,6 +66,7 @@ node {
 
 def buildartifact() {
 	stage('Build Artifact') {
+		rtMaven.tool = "maven3"
 		buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package'
 	}
 }
