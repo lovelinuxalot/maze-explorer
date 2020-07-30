@@ -23,6 +23,7 @@ pipeline {
 		        post {
 		            success {
 		                junit '**/target/*-reports/TEST-*.xml'
+		                step([$class: 'JacocoPublisher', execPattern: '**/target/jacoco.exec'])
 		            }
 		        }
 	        }
