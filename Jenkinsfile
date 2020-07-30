@@ -17,7 +17,8 @@ pipeline {
             stage('Build and test') {
 		        steps {
         	    	    //buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package cobertura:cobertura -Dcobertura.report.format=xml'
-        	    	    buildInfo = rtMaven.run pom: 'pom.xml', goals: '-Dmaven.test.failure.ignore -U clean validate compile test'
+        	    	    //buildInfo = rtMaven.run pom: 'pom.xml', goals: '-Dmaven.test.failure.ignore -U clean validate compile test'
+        	    	    sh 'maven -B clean validate compile test'
 		        }
 	        }
 
