@@ -9,7 +9,7 @@ pipeline {
     stages {
             stage('SCM') {
 		        steps {
-			        sh ls
+			        git 'https://github.com/lovelinuxalot/maze-explorer.git'
 		        }
   	        }
     }
