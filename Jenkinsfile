@@ -18,17 +18,22 @@ pipeline {
 		        steps {
         	    	    //buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean package cobertura:cobertura -Dcobertura.report.format=xml'
         	    	    //buildInfo = rtMaven.run pom: 'pom.xml', goals: '-Dmaven.test.failure.ignore -U clean validate compile test'
-        	    	    sh 'maven -B clean validate compile test'
+        	    	    sh 'mvn -Dmaven.test.failure.ignore=true -B clean validate compile test'
+		        }
+		        post {
+		            success {
+		                junit '**/target/*-reports/TEST-*.xml'
+		            }
 		        }
 	        }
 
-	        stage('Unit Test') {
-			    steps {
-				    junit '**/target/*-reports/TEST-*.xml'
-		            archive 'target/*.jar'
-		            step([$class: 'JacocoPublisher', execPattern: '**/target/jacoco.exec'])
-                    //step([$class: 'CoberturaPublisher', coberturaReportFile: 'target/site/cobertura/coverage.xml'])
-			    }
-	        }
+	        //stage('Unit Test') {
+			//    steps {
+			//
+		    //        archive 'target/*.jar'
+		    //        step([$class: 'JacocoPublisher', execPattern: '**/target/jacoco.exec'])
+            //        //step([$class: 'CoberturaPublisher', coberturaReportFile: 'target/site/cobertura/coverage.xml'])
+			//    }
+	        //}
     }
 }
