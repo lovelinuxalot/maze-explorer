@@ -5,4 +5,12 @@ pipeline {
         jdk 'jdk8'
         maven 'maven3'
     }
+
+    stages {
+            stage('SCM') {
+		        steps {
+			        sh ls
+		        }
+  	        }
+    }
 }
