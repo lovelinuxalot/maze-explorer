@@ -7,11 +7,12 @@ pipeline {
     }
 
     stages {
-            //stage('SCM') {
-		    //    steps {
-			//        git 'https://github.com/lovelinuxalot/maze-explorer.git'
-		    //    }
-  	        //}
+            stage('SCM') {
+		        steps {
+			        //git 'https://github.com/lovelinuxalot/maze-explorer.git'
+			        sh 'git pull'
+		        }
+  	        }
 
             stage('Build and test') {
 		        steps {
